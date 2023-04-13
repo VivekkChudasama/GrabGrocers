@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1084962197761",
+    "firebase_url": "https://grabgrocers-a8a0b-default-rtdb.firebaseio.com",
+    "project_id": "grabgrocers-a8a0b",
+    "storage_bucket": "grabgrocers-a8a0b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084962197761:android:87b22df1973c840b928b00",
+        "android_client_info": {
+          "package_name": "com.foodlakh.customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084962197761-t5mj59dtamq036alo7l78ki8jlbrobet.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.foodlakh.customer",
+            "certificate_hash": "2beddcaf4f706f150ad3d161245728775266e4cd"
+          }
+        },
+        {
+          "client_id": "1084962197761-i2iqh6oj538corcpqckd8j1qen22svgg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzWD9XFaEq4TeYIK7popZVIFy-Ml4dtB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084962197761-i2iqh6oj538corcpqckd8j1qen22svgg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
