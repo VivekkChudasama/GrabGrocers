@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -6,100 +6,101 @@ import {
   Platform,
   PermissionsAndroid,
   StatusBar,
-} from "react-native";
-import * as colors from "../assets/css/Colors";
+} from 'react-native';
+import * as colors from '../assets/css/Colors';
 import {
   logo_with_name,
   api_url,
   settings,
   GOOGLE_KEY,
   get_taxes,
-} from "../config/Constants";
-import { useNavigation, CommonActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
-import PushNotification, { Importance } from "react-native-push-notification";
-import RNAndroidLocationEnabler from "react-native-android-location-enabler";
-import Geolocation from "@react-native-community/geolocation";
-import { connect } from "react-redux";
+} from '../config/Constants';
+import {useNavigation, CommonActions} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification, {Importance} from 'react-native-push-notification';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import Geolocation from '@react-native-community/geolocation';
+import {connect} from 'react-redux';
 import {
   updateCurrentAddress,
   updateCurrentLat,
   updateCurrentLng,
   currentTag,
   updateProfilePicture,
-} from "../actions/CurrentAddressActions";
-import { updateTaxList } from "../actions/OrderActions";
+} from '../actions/CurrentAddressActions';
+import {updateTaxList} from '../actions/OrderActions';
 
-const Splash = (props) => {
+const Splash = props => {
   const navigation = useNavigation();
-  const [loading, setLoading] = useState("false");
+  const [loading, setLoading] = useState('false');
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", async () => {
+    const unsubscribe = navigation.addListener('focus', async () => {
       await tax_list();
       await app_settings();
     });
     return unsubscribe;
   }, []);
 
-  const app_settings = async () => {
-    axios({
-      method: "get",
-      url: api_url + settings,
-    })
-      .then(async (response) => {
-        await configure();
-        await channel_create();
-        await saveData(response.data.result);
-      })
-      .catch((error) => {
-        alert("Sorry something went wrong");
-      });
-  };
-
   const tax_list = async () => {
     axios({
-      method: "get",
+      method: 'get',
       url: api_url + get_taxes,
     })
-      .then(async (response) => {
-        console.log("tax_list---->", response);
+      .then(async response => {
+        console.log('tax_list---->', response);
         props.updateTaxList(response.data.result);
       })
-      .catch((error) => {
-        alert("Sorry something went wrong");
+      .catch(error => {
+        alert('Sorry something went wrong tax_list');
       });
   };
 
-  const channel_create = () => {
-    PushNotification.createChannel(
-      {
-        channelId: "taxi_booking", // (required)
-        channelName: "Booking", // (required)
-        channelDescription: "Taxi Booking Solution", // (optional) default: undefined.
-        playSound: true, // (optional) default: true
-        soundName: "uber.mp3", // (optional) See `soundName` parameter of `localNotification` function
-        importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
-      },
-      (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
-    );
+  const app_settings = async () => {
+    axios({
+      method: 'get',
+      url: api_url + settings,
+    })
+      .then(async response => {
+        console.log('app_settings---->', response);
+        await configure();
+        // await channel_create();
+        await saveData(response.data.result);
+      })
+      .catch(error => {
+        alert('Sorry something went wrong app_settingsss');
+      });
   };
 
+  // const channel_create = () => {
+  //   PushNotification.createChannel(
+  //     {
+  //       channelId: 'taxi_booking', // (required)
+  //       channelName: 'Booking', // (required)
+  //       channelDescription: 'Taxi Booking Solution', // (optional) default: undefined.
+  //       playSound: true, // (optional) default: true
+  //       soundName: 'uber.mp3', // (optional) See `soundName` parameter of `localNotification` function
+  //       importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+  //       vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+  //     },
+  //     created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+  //   );
+  // };
+
   const configure = () => {
-    if (Platform.OS == "android") {
+    if (Platform.OS == 'android') {
       PushNotification.configure({
         // (optional) Called when Token is generated (iOS and Android)
         onRegister: function (token) {
-          console.log("TOKEN:", token.token);
+          console.log('TOKEN:', token.token);
           global.fcm_token = token.token;
         },
 
         // (required) Called when a remote is received or opened, or local notification is opened
         onNotification: function (notification) {
-          console.log("NOTIFICATION:", notification);
+          console.log('NOTIFICATION:', notification);
 
           // process the notification
 
@@ -109,15 +110,15 @@ const Splash = (props) => {
 
         // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
         onAction: function (notification) {
-          console.log("ACTION:", notification.action);
-          console.log("NOTIFICATION:", notification);
+          console.log('ACTION:', notification.action);
+          console.log('NOTIFICATION:', notification);
 
           // process the action
         },
 
         // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
         onRegistrationError: function (err) {
-          console.error(err.message, err);
+          console.error('onRegistrationError--->', err.message, err);
         },
 
         // IOS ONLY (optional): default: all - Permissions to register.
@@ -141,17 +142,18 @@ const Splash = (props) => {
         requestPermissions: true,
       });
     } else {
-      global.fcm_token = "IOS";
+      global.fcm_token = 'IOS';
     }
   };
 
-  const saveData = async (data) => {
-    const id = await AsyncStorage.getItem("id");
-    const customer_name = await AsyncStorage.getItem("customer_name");
-    const phone_number = await AsyncStorage.getItem("phone_number");
-    const phone_with_code = await AsyncStorage.getItem("phone_with_code");
-    const profile_picture = await AsyncStorage.getItem("profile_picture");
-    const existing = await AsyncStorage.getItem("existing");
+  const saveData = async data => {
+    console.log('data--------saveData------->', data);
+    const id = await AsyncStorage.getItem('id');
+    const customer_name = await AsyncStorage.getItem('customer_name');
+    const phone_number = await AsyncStorage.getItem('phone_number');
+    const phone_with_code = await AsyncStorage.getItem('phone_with_code');
+    const profile_picture = await AsyncStorage.getItem('profile_picture');
+    const existing = await AsyncStorage.getItem('existing');
     global.existing = await existing;
     global.app_name = await data.app_name;
     global.currency = await data.default_currency;
@@ -173,73 +175,80 @@ const Splash = (props) => {
   };
 
   const check_location = async () => {
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
+      console.log('coming check location IFFFF');
       RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
         interval: 10000,
         fastInterval: 5000,
       })
-        .then(async (data) => {
+        .then(async data => {
           try {
             const granted = await PermissionsAndroid.request(
               PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
               {
-                title: "Location Access Required",
+                title: 'Location Access Required',
                 message:
                   global.app_name +
-                  " needs to Access your location for show nearest restaurant",
-              }
+                  ' needs to Access your location for show nearest restaurant',
+              },
             );
+            console.log('Data Location', granted);
 
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
               await getInitialLocation();
             } else {
-              alert("Sorry unable to fetch your location");
+              alert('Sorry unable to fetch your location');
             }
           } catch (err) {
-            navigation.navigate("LocationEnable");
+            navigation.navigate('LocationEnable');
           }
         })
-        .catch((err) => {
-          navigation.navigate("LocationEnable");
+        .catch(err => {
+          navigation.navigate('LocationEnable');
         });
     } else {
+      console.log('coming check location ELSE ELSE');
       await getInitialLocation();
     }
   };
 
   const getInitialLocation = async () => {
     await Geolocation.getCurrentPosition(
-      async (position) => {
+      async position => {
         onRegionChange(position.coords);
       },
-      (error) => navigation.navigate("LocationEnable"),
-      { enableHighAccuracy: false, timeout: 10000 }
+      error => navigation.navigate('LocationEnable'),
+      {enableHighAccuracy: false, timeout: 10000},
     );
   };
 
-  const onRegionChange = async (value) => {
-    props.addCurrentAddress("Please wait...");
+  const onRegionChange = async value => {
+    // props.addCurrentAddress('Please wait...');
     fetch(
-      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+      'https://maps.googleapis.com/maps/api/geocode/json?address=' +
         value.latitude +
-        "," +
+        ',' +
         value.longitude +
-        "&key=" +
-        GOOGLE_KEY
+        '&key=' +
+        GOOGLE_KEY,
     )
-      .then((response) => response.json())
-      .then(async (responseJson) => {
-        console.log("onRagionChange--->", responseJson);
-        if (responseJson.results[0].formatted_address != undefined) {
+      .then(response => response.json())
+      .then(async responseJson => {
+        console.log('onRagionChange--->', responseJson);
+        if (
+          responseJson &&
+          responseJson.result &&
+          responseJson.results[0].formatted_address != undefined
+        ) {
           let address = await responseJson.results[0].formatted_address;
           await props.updateCurrentAddress(address);
           await props.updateCurrentLat(value.latitude);
           await props.updateCurrentLng(value.longitude);
-          await props.currentTag("Live");
+          await props.currentTag('Live');
 
           navigate_app();
         } else {
-          alert("Sorry something went wrong");
+          alert('Sorry something went wrong RegionChange');
         }
       });
   };
@@ -249,21 +258,21 @@ const Splash = (props) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Home" }],
-        })
+          routes: [{name: 'Home'}],
+        }),
       );
     } else {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Intro" }],
-        })
+          routes: [{name: 'Intro'}],
+        }),
       );
     }
   };
 
   return (
-    <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+    <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
       <StatusBar backgroundColor={colors.theme_bg} />
       <View style={styles.logo}>
         <Image style={styles.image_style} source={logo_with_name} />
@@ -274,10 +283,10 @@ const Splash = (props) => {
 
 const styles = StyleSheet.create({
   image_style: {
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
     padding: 5,
     padding: 5,
@@ -286,7 +295,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 400, // Set your logo width
     height: 200, // Set your logo height
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
 });
 
@@ -300,13 +309,13 @@ function mapStateToProps(state) {
   };
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateCurrentAddress: (data) => dispatch(updateCurrentAddress(data)),
-  updateCurrentLat: (data) => dispatch(updateCurrentLat(data)),
-  updateCurrentLng: (data) => dispatch(updateCurrentLng(data)),
-  currentTag: (data) => dispatch(currentTag(data)),
-  updateTaxList: (data) => dispatch(updateTaxList(data)),
-  updateProfilePicture: (data) => dispatch(updateProfilePicture(data)),
+const mapDispatchToProps = dispatch => ({
+  updateCurrentAddress: data => dispatch(updateCurrentAddress(data)),
+  updateCurrentLat: data => dispatch(updateCurrentLat(data)),
+  updateCurrentLng: data => dispatch(updateCurrentLng(data)),
+  currentTag: data => dispatch(currentTag(data)),
+  updateTaxList: data => dispatch(updateTaxList(data)),
+  updateProfilePicture: data => dispatch(updateProfilePicture(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Splash);
